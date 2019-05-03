@@ -7,8 +7,9 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-import VueRouter from 'vue-router';
 
+
+import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
 /**
@@ -17,12 +18,24 @@ Vue.use(VueRouter);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+const DashboardIndex = require('./components/dashboard/Index.vue').default;
+const ProfileIndex = require('./components/profile/Index.vue').default;
 const UserIndex = require('./components/users/Index.vue').default;
 
 const routes =[
     {
+        path:'/dashboard',
+        name: 'dashboard.Index.vue',
+        component : DashboardIndex
+    },
+    {
+        path:'/profile',
+        name: 'profile.Index.vue',
+        component : ProfileIndex
+    },
+    {
         path:'/users',
-        name: 'users.index',
+        name: 'users.Index.vue',
         component : UserIndex
     }
 ];

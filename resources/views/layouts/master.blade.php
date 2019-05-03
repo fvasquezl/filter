@@ -9,13 +9,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>FilterBooks</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
 
 </head>
 <body class="hold-transition sidebar-mini">
-<div class="wrapper">
+<div class="wrapper" id="app">
     @include("layouts.partials.navbar")
     @include("layouts.partials.mainSidebar")
 
@@ -24,7 +27,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         @include("layouts.partials.breadcrumb")
         <div class="content">
             <div class="container-fluid">
+
                 <router-view></router-view>
+
             </div>
         </div>
     </div>

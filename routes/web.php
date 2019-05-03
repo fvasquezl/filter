@@ -17,9 +17,9 @@ Route::get('/', function () {
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/users',function (){
-    return view('users.index');
-});
+//Route::get('/users',function (){
+//    return view('users.index');
+//});
 
 Route::prefix('/api/users')
     ->namespace('Api')
@@ -29,3 +29,5 @@ Route::prefix('/api/users')
     });
 Auth::routes();
 
+
+Route::get('/{path}','HomeController@index')->where('path','([A-z\d-\/_.]+)?');

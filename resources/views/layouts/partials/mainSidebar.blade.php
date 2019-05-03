@@ -25,18 +25,16 @@
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <router-link to="/dashboard" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt blue"></i>
                         <p>
                             Dashboard
                         </p>
-                    </a>
+                    </router-link>
                 </li>
-
-
                 <li class="nav-item has-treeview ">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-cog"></i>
+                    <a href="#" class="nav-link ">
+                        <i class="nav-icon fas fa-cog orange"></i>
                         <p>
                             Management
                             <i class="right fas fa-angle-left"></i>
@@ -44,10 +42,10 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <i class="fas fa-check-square nav-icon"></i>
-                                <p>Active Page</p>
-                            </a>
+                            <router-link to="/users" class="nav-link ">
+                                <i class="fas fa-users nav-icon teal"></i>
+                                <p>Users</p>
+                            </router-link>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -57,22 +55,27 @@
                         </li>
                     </ul>
                 </li>
-
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-user-alt"></i>
+                    <router-link to="/profile" class="nav-link">
+                        <i class="nav-icon fas fa-user-alt green"></i>
                         <p>
                             Profile
                         </p>
-                    </a>
+                    </router-link>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-power-off"></i>
+                    <a class="nav-link" href="{{ route('logout') }}"
+                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                        <i class="nav-icon fas fa-power-off red"></i>
                         <p>
-                            Logout
+                            {{ __('Logout') }}
                         </p>
                     </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
                 </li>
 
             </ul>
