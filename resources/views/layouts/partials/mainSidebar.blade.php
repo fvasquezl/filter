@@ -66,7 +66,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('logout') }}"
                        onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                        document.getElementById('logout-form').submit();">
                         <i class="nav-icon fas fa-power-off red"></i>
                         <p>
                             {{ __('Logout') }}

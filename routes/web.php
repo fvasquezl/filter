@@ -21,13 +21,13 @@ Route::get('/home', 'HomeController@index')->name('home');
 //    return view('users.index');
 //});
 
-Route::prefix('/api/users')
-    ->namespace('Api')
-    ->name('api.users.')
-    ->group(function(){
-        Route::get('/','UserController@index')->name('index');
-    });
+//Route::prefix('/api/users')
+//    ->namespace('Api')
+//    ->name('api.users.')
+//    ->group(function(){
+//        Route::get('/','UserController@index')->name('index');
+//    });
 Auth::routes();
 
-
-Route::get('/{path}','HomeController@index')->where('path','([A-z\d-\/_.]+)?');
+//Route::get('{path}',"HomeController@index")->where( 'path', '([A-z\d-\/_.]+)?' );
+Route::get('{path}',"HomeController@index")->where( 'path', 'users' );
