@@ -26,8 +26,11 @@
     },
     "dependencies": {
         "admin-lte": "^3.0.0-alpha.2",
+        "moment": "^2.24.0",
         "morris.js": "github:morrisjs/morris.js",
+        "sweetalert2": "^8.10.1",
         "vform": "^1.0.0",
+        "vue-progressbar": "^0.7.5",
         "vue-router": "^3.0.6"
     }
 }
