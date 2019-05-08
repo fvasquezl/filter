@@ -16,7 +16,7 @@
                         <h5 class="widget-user-desc">Web Designer</h5>
                     </div>
                     <div class="widget-user-image">
-                        <img class="img-circle" src="/img/profile.jpg" alt="User Avatar">
+                        <img class="img-circle" :src="getProfilePhoto" alt="User Avatar">
                     </div>
                     <div class="card-footer">
                         <div class="row">
@@ -64,61 +64,62 @@
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
-                            <div class="tab-pane active show" id="activity">
-
-                            </div>
                             <div class="tab-pane" id="settings">
                                 <form class="form-horizontal">
                                     <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Name</label>
-                                        <div class="col-sm-10">
-                                            <input type="email"
+                                        <label for="name" class="control-label">Name</label>
+                                            <input type="text"
+                                                   name="name"
                                                    class="form-control"
-                                                   id="inputName"
-                                                   placeholder="Name" v-model="form.name">
-                                        </div>
+                                                   :class="{ 'is-invalid': form.errors.has('name') }"
+                                                   id="name"
+                                                   placeholder="Name"
+                                                   v-model="form.name">
+                                            <has-error :form="form" field="name"></has-error>
                                     </div>
                                     <div class="form-group">
-                                        <label for="inputEmail" class="col-sm-2 control-label">Email</label>
-
-                                        <div class="col-sm-10">
+                                        <label for="email" class="control-label">Email</label>
                                             <input type="email"
+                                                   name="email"
                                                    class="form-control"
-                                                   id="inputEmail"
+                                                   :class="{ 'is-invalid': form.errors.has('email') }"
+                                                   id="email"
                                                    placeholder="Email"
                                                    v-model="form.email">
-                                        </div>
+                                            <has-error :form="form" field="email"></has-error>
                                     </div>
                                     <div class="form-group">
-                                        <label for="inputExperience" class="col-sm-2 control-label">Experience</label>
+                                        <label for="bio">Experience</label>
+                                            <textarea class="form-control"
+                                                      name="bio"
+                                                      :class="{ 'is-invalid': form.errors.has('bio') }"
+                                                      id="bio"
+                                                      placeholder="Experience"
+                                                      v-model="form.bio">
+                                            </textarea>
+                                        <has-error :form="form" field="bio"></has-error>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="photo">Profile Photo</label>
+                                            <input class="form-control-file"
+                                                   type="file"
+                                                   name="photo"
+                                                   id="photo"
+                                                   @change="updateProfile">
+                                    </div>
 
-                                        <div class="col-sm-10">
-                                            <textarea class="form-control" id="inputExperience"
-                                                      placeholder="Experience"></textarea>
-                                        </div>
+                                    <div class="form-group">
+                                        <label for="password" class="control-label">Password (leave emptu if not changing)</label>
+                                            <input type="password"
+                                                   name="password"
+                                                   class="form-control"
+                                                   :class="{ 'is-invalid': form.errors.has('password') }"
+                                                   id="password"
+                                                   placeholder="Password">
+                                            <has-error :form="form" field="password"></has-error>
                                     </div>
                                     <div class="form-group">
-                                        <label for="inputSkills" class="col-sm-2 control-label">Skills</label>
-
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputSkills"
-                                                   placeholder="Skills">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox"> I agree to the <a href="#">terms and
-                                                    conditions</a>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger">Submit</button>
-                                        </div>
+                                            <button @click.prevent="updateInfo" type="submit" class="btn btn-success">Submit</button>
                                     </div>
                                 </form>
                             </div>
@@ -148,9 +149,42 @@
         mounted() {
             console.log('Component Mounted')
         },
+        methods:{
+            updateProfile(e){
+                let file= e.target.files[0];
+                let reader = new FileReader();
+
+                if(file['size'] < 2111775){
+                    reader.onloadend = (file) => {
+                        this.form.photo = reader.result;
+                    };
+                    reader.readAsDataURL(file)
+                }else{
+                    Swal.fire({
+                        type:'error',
+                        title:'Oops...',
+                        text:'You are uploading a large file',
+                    })
+                }
+
+            },
+            updateInfo(){
+                this.form.put('api/profile')
+                    .then((res)=>{
+                        this.form.photo = res.data.data.photo;
+                    })
+                    .catch()
+            },
+        },
+        computed:{
+            getProfilePhoto(){
+
+                return "img/profile/"+this.form.photo;
+            }
+        },
         created() {
             axios.get('api/profile')
-                .then(({data})=>(this.form.fill(data)))
+                .then(({data})=>(this.form.fill(data)));  // aqui llamar de nuevo
         }
     }
 </script>
