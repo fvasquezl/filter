@@ -12,8 +12,8 @@
                 <div class="card card-widget widget-user">
                     <!-- Add the bg color to the header using any of the bg-* classes -->
                     <div class="widget-user-header text-white" style="background-image:url('./img/user_cover.jpg');height:250px">
-                        <h3 class="widget-user-username">Elizabeth Pierce</h3>
-                        <h5 class="widget-user-desc">Web Designer</h5>
+                        <h3 class="widget-user-username">{{this.form.name}}</h3>
+                        <h5 class="widget-user-desc">{{this.form.type}}</h5>
                     </div>
                     <div class="widget-user-image">
                         <img class="img-circle" :src="getProfilePhoto" alt="User Avatar">
@@ -64,6 +64,9 @@
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
+                            <div class="tab-pane" id="activity">
+                               Activities
+                            </div>
                             <div class="tab-pane" id="settings">
                                 <form class="form-horizontal">
                                     <div class="form-group">
@@ -150,6 +153,10 @@
             console.log('Component Mounted')
         },
         methods:{
+            getData(){
+                axios.get('api/profile')
+                    .then(({data})=>(this.form.fill(data)));  // aqui llamar de nuevo
+            },
             updateProfile(e){
                 let file= e.target.files[0];
                 let reader = new FileReader();
@@ -166,25 +173,34 @@
                         text:'You are uploading a large file',
                     })
                 }
-
             },
             updateInfo(){
+                this.$Progress.start();
+
                 this.form.put('api/profile')
-                    .then((res)=>{
-                        this.form.photo = res.data.data.photo;
+                    .then(()=>{
+                        Fire.$emit('GetData');
+                        Toast.fire({
+                            type: 'success',
+                            title: 'User Update successfully'
+                        });
+                        this.$Progress.finish();
                     })
-                    .catch()
+                    .catch(()=>{
+                        this.$Progress.error();
+                    })
             },
         },
         computed:{
             getProfilePhoto(){
-
-                return "img/profile/"+this.form.photo;
-            }
+                return (this.form.photo.length >200) ? this.form.photo : "img/profile/"+this.form.photo ;
+            },
         },
         created() {
-            axios.get('api/profile')
-                .then(({data})=>(this.form.fill(data)));  // aqui llamar de nuevo
+            this.getData();
+            Fire.$on('GetData',()=>{
+                this.getData()
+            })
         }
     }
 </script>

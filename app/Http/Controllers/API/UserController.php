@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\Facades\Image;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -16,22 +20,29 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+
     }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
+     * @throws AuthorizationException
      */
     public function index()
     {
-        return  User::latest()->paginate(10);
+        if(Gate::allows('isAdmin') ||Gate::allows('isAuthor') ){
+            return  User::latest()->paginate(2);
+        }
+
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
+     * @throws ValidationException
      */
     public function store(Request $request)
     {
@@ -54,7 +65,7 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -78,7 +89,7 @@ class UserController extends Controller
         $this->validate($request,[
             'name'=> 'required|string|max:191',
             'email'=> 'required|string|email|max:191|unique:users,email,'.$user->id,
-            'password'=> 'sometimes|required|string|min:6',
+            'password'=> 'sometimes|string|min:6',
         ]);
 
         $currentPhoto = $user->photo;
@@ -109,15 +120,16 @@ class UserController extends Controller
 
        $user->update($request->all());
 
-       return ['success'=>'Success','data' => $user,];
+       return ['success'=>'Success'];
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param int $id
+     * @return array
+     * @throws ValidationException
      */
     public function update(Request $request, $id)
     {
@@ -137,14 +149,30 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return array
+     * @throws AuthorizationException
      */
     public function destroy($id)
     {
+        $this->authorize('IsAdmin');
+
         $user = User::findOrFail($id);
         $user->delete();
         return ['message'=> 'User Deleted'];
+    }
 
+
+    public function search(Request $request)
+    {
+        if($search = $request->q){
+            $users = User::where(function ($query) use ($search){
+               $query->where('name','LIKE',"%$search%")->orWhere('email','LIKE',"%$search%");
+            })->paginate(20);
+        }else{
+            $users = User::latest()->paginate(2);
+        }
+
+        return $users;
     }
 }
